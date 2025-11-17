@@ -3,7 +3,7 @@
 // ---------- CONFIG ----------
 const HOURS = Array.from({length:24},(_,i)=>i);
 const STORAGE_KEY = 'studylog_v1';
-const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz2mWtnqP4K9Rrl9OxvY2guqE-Miyg05IshEN_USczgwXybSixv21nzeeycDYOuuHDs_Q/exec'; // <-- REPLACE THIS
+const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzZ7YrKPc2Vv-wOJCFo6IFtU550_oLcssK-aJdVQyAbJQG7YY_L5k4OTMk2JCC5Wg8slw/exec'; // <-- REPLACE THIS
 
 // ---------- Helpers ----------
 function fmtDate(d){ return d.toISOString().slice(0,10); }
