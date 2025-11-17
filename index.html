@@ -1,78 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Study Activity Log — Weekly</title>
-  <style>
-    :root{--accent:#2563eb;--muted:#666;--bg:#f7f9fc}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);color:#111}
-    .app{max-width:1100px;margin:18px auto;padding:18px;background:white;border-radius:12px;box-shadow:0 6px 18px rgba(20,30,40,0.08)}
-    header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-    h1{font-size:20px;margin:0}
-    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    button{background:var(--accent);color:white;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
-    button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(37,99,235,0.12)}
-    .small{padding:6px 10px;font-size:14px}
-    .week-info{font-size:14px;color:var(--muted);margin-top:6px}
-
-    .grid-wrap{overflow:auto;margin-top:14px;border-radius:8px}
-    table{border-collapse:collapse;width:100%;min-width:1000px}
-    th,td{border:1px solid #eef2f7;padding:8px;text-align:left;vertical-align:top}
-    th{background:#fbfdff;position:sticky;top:0;z-index:3}
-    td.hour{width:110px;background:#fbfbfb;color:var(--muted);font-size:13px}
-    td.cell{min-width:160px;height:80px;padding:6px;cursor:pointer}
-    td.cell.empty{background:transparent;color:#bbb;font-size:13px}
-    td.today{outline:3px solid rgba(37,99,235,0.06)}
-    .hour-label{font-weight:600}
-    .meta{font-size:12px;color:var(--muted);margin-top:6px}
-
-    footer{margin-top:12px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-    @media (max-width:880px){td.hour{display:none}table{min-width:760px}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Activity Log</title>
+<style>
+body{font-family:sans-serif;background:#f0f2f5;margin:0;padding:0;}
+.container{max-width:900px;margin:20px auto;background:white;padding:20px;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,0.1);}
+h1{text-align:center;color:#333;}
+table{width:100%;border-collapse:collapse;margin-top:20px;}
+td,th{border:1px solid #ddd;padding:8px;text-align:center;}
+th{background:#667eea;color:white;}
+.hour-label{font-weight:bold;}
+.cell{cursor:pointer;min-height:30px;}
+.cell.today{background:#e0f7fa;}
+.empty div{color:#bbb;font-size:13px;}
+button{margin:5px;padding:10px 15px;border:none;border-radius:8px;background:#667eea;color:white;cursor:pointer;}
+#syncLabel{margin-left:10px;font-weight:bold;color:#555;}
+</style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div>
-        <h1>Study Activity Log — Weekly View</h1>
-        <div class="week-info" id="weekInfo">Week</div>
-      </div>
-      <div class="controls">
-        <button id="prevWeek" class="small">◀ Prev</button>
-        <button id="todayWeek" class="small ghost">This Week</button>
-        <button id="nextWeek" class="small">Next ▶</button>
-        <button id="exportCsv" class="small">Export CSV</button>
-        <button id="clearWeek" class="small ghost">Clear Week</button>
-      </div>
-    </header>
 
-    <div class="grid-wrap">
-      <table id="logTable">
-        <thead>
-          <tr>
-            <th class="hour-col">Hour</th>
-            <th id="day0"></th>
-            <th id="day1"></th>
-            <th id="day2"></th>
-            <th id="day3"></th>
-            <th id="day4"></th>
-            <th id="day5"></th>
-            <th id="day6"></th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-
-    <footer>
-      <div class="meta">Tap / Click any cell to edit. Data saved locally and synced to Google Sheets.</div>
-      <div class="meta" id="syncStatus">Sync status: <strong id="syncLabel">idle</strong></div>
-    </footer>
+<div class="container">
+  <h1>Study Activity Log</h1>
+  <div>
+    <button id="prevWeek">← Previous Week</button>
+    <button id="todayWeek">Today</button>
+    <button id="nextWeek">Next Week →</button>
+    <button id="clearWeek">Clear Week</button>
+    <span id="syncLabel">idle</span>
+    <button id="exportCsv">Export CSV</button>
   </div>
+  <div id="weekInfo" style="margin-top:10px;font-weight:bold;"></div>
+  <table>
+    <thead>
+      <tr>
+        <th>Hour</th>
+        <th id="day0"></th>
+        <th id="day1"></th>
+        <th id="day2"></th>
+        <th id="day3"></th>
+        <th id="day4"></th>
+        <th id="day5"></th>
+        <th id="day6"></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
 
-  <!-- include JS -->
-  <script src="log.js"></script>
+<script src="log.js"></script>
 </body>
 </html>
-
