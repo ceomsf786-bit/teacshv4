@@ -3,7 +3,7 @@
 // ---------- CONFIG ----------
 const HOURS = Array.from({length:24},(_,i)=>i);
 const STORAGE_KEY = 'studylog_v1';
-const GOOGLE_WEBAPP_URL = 'PASTE_YOUR_APPS_SCRIPT_WEBAPP_URL_HERE'; // <-- REPLACE THIS
+const GOOGLE_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz2mWtnqP4K9Rrl9OxvY2guqE-Miyg05IshEN_USczgwXybSixv21nzeeycDYOuuHDs_Q/exec'; // <-- REPLACE THIS
 
 // ---------- Helpers ----------
 function fmtDate(d){ return d.toISOString().slice(0,10); }
