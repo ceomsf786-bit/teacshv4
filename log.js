@@ -21,30 +21,40 @@ function setSyncState(state){
   if(!syncLabel()) return;
   syncLabel().textContent = state;
 }
-function syncToSheet(payload){
+
+async function syncToSheet(payload){
   if(!GOOGLE_WEBAPP_URL || GOOGLE_WEBAPP_URL.includes('PASTE_YOUR')) {
     console.warn('Google Web App URL not set. Skipping sync.');
     setSyncState('webapp URL missing');
     return;
   }
+
   setSyncState('syncing...');
-  // POST payload (only changed entries or full data)
-  fetch(GOOGLE_WEBAPP_URL, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
-  })
-  .then(r => r.text())
-  .then(txt => {
-    console.log('Sheet sync response:', txt);
-    setSyncState('synced');
-    // optionally clear state after short time
-    setTimeout(()=> setSyncState('idle'), 2000);
-  })
-  .catch(err => {
+  try {
+    const response = await fetch(GOOGLE_WEBAPP_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+
+    const resultText = await response.text();
+    let result;
+    try { result = JSON.parse(resultText); } catch(e) { result = {status:'OK', raw: resultText}; }
+
+    if(result.status === 'OK') {
+      setSyncState('synced ✔');
+      console.log('Sheet sync success:', result);
+    } else {
+      setSyncState('sync failed ❌');
+      console.error('Sheet sync error:', result);
+    }
+
+  } catch(err) {
+    setSyncState('sync failed ❌');
     console.error('Sync failed:', err);
-    setSyncState('sync failed');
-  });
+  }
+
+  setTimeout(()=> setSyncState('idle'), 2000);
 }
 
 // ---------- Week handling ----------
@@ -52,7 +62,7 @@ let weekStart = getWeekStart(new Date());
 function getWeekStart(d){
   const dt = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const day = dt.getDay(); // 0 Sun .. 6 Sat
-  const diff = (day === 0) ? -6 : (1 - day); // monday start
+  const diff = (day === 0) ? -6 : (1 - day); // Monday start
   dt.setDate(dt.getDate() + diff);
   return dt;
 }
@@ -77,7 +87,10 @@ function renderWeek(){
 
   for(const h of HOURS){
     const tr = document.createElement('tr');
-    const th = document.createElement('td'); th.className='hour'; th.innerHTML = `<div class="hour-label">${labelHour(h)}</div>`; tr.appendChild(th);
+    const th = document.createElement('td'); 
+    th.className='hour'; 
+    th.innerHTML = `<div class="hour-label">${labelHour(h)}</div>`; 
+    tr.appendChild(th);
 
     for(let d=0; d<7; d++){
       const td = document.createElement('td'); td.className='cell';
@@ -101,15 +114,13 @@ function openEditor(td){
   const dateStr = td.dataset.date;
   const h = Number(td.dataset.hour);
   const current = loadDay(dateStr)[h] || '';
-  // simple prompt editor (works across devices)
   const result = prompt(`Enter study for ${dateStr} — ${labelHour(h)}:`, current);
   if(result === null) return; // cancelled
   loadDay(dateStr)[h] = result.trim();
-  // If whole day empty, remove object to keep storage tidy
   if(loadDay(dateStr).every(v=>v==='')) delete data[dateStr];
   saveLocal();
   renderWeek();
-  // Build a compact payload to send only changed cell
+
   const payload = { updates: [{ date: dateStr, hour: h, entry: loadDay(dateStr)[h] || '' }], source: 'studylog' };
   syncToSheet(payload);
 }
@@ -123,7 +134,6 @@ document.getElementById('clearWeek').onclick = ()=>{
   if(!confirm('Clear all entries for this week? This cannot be undone.')) return;
   for(let i=0;i<7;i++){ const iso = document.getElementById('day'+i).dataset.iso; delete data[iso]; }
   saveLocal(); renderWeek();
-  // send cleared week info - optional
   const weekPayload = { action: 'clear_week', weekStart: document.getElementById('day0').dataset.iso };
   syncToSheet(weekPayload);
 };
@@ -145,4 +155,3 @@ document.getElementById('exportCsv').onclick = ()=>{
 // ---------- Init ----------
 renderWeek();
 setSyncState('idle');
-
